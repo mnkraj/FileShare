@@ -48,7 +48,7 @@ export default function Home() {
       {/* Main */}
       <main className="flex flex-col items-center justify-center flex-grow p-0">
         <h2 className="text-5xl font-bold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-[#A855F7] to-[#EC4899] drop-shadow-xl">
-          Seamless File Sharing
+          Anonymous File Sharing
         </h2>
         <p className="text-white/70 mb-5 text-lg">
           Max File Size: <strong className="text-[#A855F7]">100MB</strong>

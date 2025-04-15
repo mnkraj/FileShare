@@ -19,7 +19,7 @@ const UploadFile = async (file) => {
       resource_type: "raw", // Automatically detect file type (image, video, etc.)
       folder: "Fileshare", // Cloudinary folder to store files
     });
-    console.log(result.secure_url);
+    // console.log(result.secure_url);
     return result.secure_url; // Return the secure URL of the uploaded file
   } catch (error) {
     console.error("Error during file upload:", error);

@@ -6,7 +6,7 @@ const dataSchema = new Schema(
     uniqueId: {
       type: String,
       required: true,
-      unique: true, 
+      unique: true,
     },
     fileUrls: {
       type: [String],
@@ -14,6 +14,11 @@ const dataSchema = new Schema(
     text: {
       type: String, // Optional text field for storing any additional text
       default: "", // Default value in case no text is provided
+    },
+    expireAt: {
+      type: Date,
+      default: () => new Date(Date.now() + 2 * 60 * 1000), // 24 hours from now
+      index: { expires: 0 }, // TTL index: expire exactly at `expireAt`
     },
   },
   {

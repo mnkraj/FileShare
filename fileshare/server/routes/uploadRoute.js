@@ -6,7 +6,6 @@ const { generateToken } = require("../utils/GenerateToken");
 const formidable = require("formidable");
 
 router.post("/upload", async (req, res) => {
-  // Set up Formidable to parse the form data
   const form = new formidable.IncomingForm();
 
   form.parse(req, async (err, fields, files) => {
@@ -23,8 +22,8 @@ router.post("/upload", async (req, res) => {
         : [files.files]
       : [];
 
-    console.log("Parsed Fields:", fields);
-    console.log("Parsed Files:", fileArray);
+    // console.log("Parsed Fields:", fields);
+    // console.log("Parsed Files:", fileArray);
 
     let token, FetchedData;
 

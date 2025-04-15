@@ -1,0 +1,75 @@
+const express = require("express");
+const router = express.Router();
+const dataModel = require("../models/Data");
+const { UploadFile } = require("../utils/FileUpload");
+const { generateToken } = require("../utils/GenerateToken");
+const formidable = require("formidable");
+
+router.post("/upload", async (req, res) => {
+  // Set up Formidable to parse the form data
+  const form = new formidable.IncomingForm();
+
+  form.parse(req, async (err, fields, files) => {
+    if (err) {
+      console.error("Form parsing error:", err);
+      return res.json({ success: false, message: "Error parsing form data" });
+    }
+
+    const text = Array.isArray(fields.text) ? fields.text[0] : fields.text;
+    const id = Array.isArray(fields.id) ? fields.id[0] : fields.id;
+    const fileArray = files?.files
+      ? Array.isArray(files.files)
+        ? files.files
+        : [files.files]
+      : [];
+
+    console.log("Parsed Fields:", fields);
+    console.log("Parsed Files:", fileArray);
+
+    let token, FetchedData;
+
+    // If id is not provided, generate a new token and create a new data entry
+    if (!id) {
+      token = await generateToken();
+      FetchedData = new dataModel({
+        uniqueId: token,
+        text: text || null,
+      });
+    } else {
+      // If an ID is provided, find the corresponding data entry
+      FetchedData = await dataModel.findById(id);
+
+      if (!FetchedData)
+        return res.json({ success: false, message: "Record not found" });
+
+      if (!fileArray.length && !text)
+        return res.json({ success: true, uniqueId: FetchedData.uniqueId });
+    }
+
+    // Handle file uploads
+    for (let file of fileArray) {
+      try {
+        const fileData = await UploadFile(file); // Pass the file object directly
+        if (fileData) {
+          FetchedData.fileUrls.push(fileData); // Store the URL of the uploaded file
+        } else {
+          return res.json({ success: false, message: "File upload failed" });
+        }
+      } catch (error) {
+        console.error("Error uploading file:", error);
+        return res.json({ success: false, message: "File upload failed" });
+      }
+    }
+
+    // If there is additional text, update it
+    if (text) {
+      FetchedData.text = text;
+    }
+
+    // Save the updated record to the database
+    await FetchedData.save();
+    return res.json({ success: true, id: FetchedData._id });
+  });
+});
+
+module.exports = router;

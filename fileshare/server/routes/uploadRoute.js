@@ -44,28 +44,28 @@ router.post("/upload", async (req, res) => {
       if (!fileArray.length && !text)
         return res.json({ success: true, uniqueId: FetchedData.uniqueId });
     }
-
-    // Handle file uploads
-    for (let file of fileArray) {
+    if (fileArray.length > 0) {
       try {
-        const fileData = await UploadFile(file); // Pass the file object directly
-        if (fileData) {
-          FetchedData.fileUrls.push(fileData); // Store the URL of the uploaded file
-        } else {
-          return res.json({ success: false, message: "File upload failed" });
+        const uploadPromises = fileArray.map(file => UploadFile(file)); 
+        const fileUrls = await Promise.all(uploadPromises); 
+    
+        if (fileUrls.includes(null)) {
+          return res.json({ success: false, message: "One or more files failed to upload" });
         }
+    
+        
+        FetchedData.fileUrls.push(...fileUrls);
       } catch (error) {
-        console.error("Error uploading file:", error);
+        console.error("Error uploading files:", error);
         return res.json({ success: false, message: "File upload failed" });
       }
     }
-
-    // If there is additional text, update it
+    
+    
     if (text) {
       FetchedData.text = text;
     }
 
-    // Save the updated record to the database
     await FetchedData.save();
     return res.json({ success: true, id: FetchedData._id });
   });

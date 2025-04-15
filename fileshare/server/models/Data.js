@@ -12,12 +12,12 @@ const dataSchema = new Schema(
       type: [String],
     },
     text: {
-      type: String, // Optional text field for storing any additional text
-      default: "", // Default value in case no text is provided
+      type: String, 
+      default: "", 
     },
     expireAt: {
       type: Date,
-      default: () => new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours from now
+      default: () => new Date(Date.now() + 24 * 60 * 60 * 1000), 
       index: { expires: 0 }, // TTL index: expire exactly at `expireAt`
     },
   },

@@ -72,4 +72,21 @@ router.post("/upload", async (req, res) => {
   });
 });
 
+router.get("/fetch/:uniqueId", async (req, res) => {
+  const { uniqueId } = req.params;
+
+  try {
+    const fetchedData = await dataModel.findOne({ uniqueId });
+    if (!fetchedData) {
+      return res.json({ success: false, message: "Record not found" });
+    }
+    const dataToReturn = fetchedData.toObject(); // convert to plain object
+    delete dataToReturn._id;
+    return res.json({ success: true, data: dataToReturn });
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    return res.json({ success: false, message: "Error fetching data" });
+  }
+});
+
 module.exports = router;

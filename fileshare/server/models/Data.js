@@ -17,7 +17,7 @@ const dataSchema = new Schema(
     },
     expireAt: {
       type: Date,
-      default: () => new Date(Date.now() + 2 * 60 * 1000), // 24 hours from now
+      default: () => new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours from now
       index: { expires: 0 }, // TTL index: expire exactly at `expireAt`
     },
   },
